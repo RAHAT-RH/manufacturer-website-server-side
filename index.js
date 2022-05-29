@@ -4,7 +4,7 @@ const ObjectID = require("mongodb").ObjectId;
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -16,7 +16,6 @@ app.use(express.json());
 // mongoDB
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ffsjs.mongodb.net/?retryWrites=true&w=majority`;
 
-console.log(uri)
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 
@@ -28,6 +27,8 @@ async function run() {
         const orderCollection = client.db('computer_products').collection('all_orders');
         const reviewCollection = client.db('computer_products').collection('all_review');
         const userCollection = client.db('computer_products').collection('all_user');
+        const paymentCollection = client.db('computer_products').collection('payments');
+        const profileCollection = client.db('computer_products').collection('profile');
 
         const verifyJWT = (req, res, next) => {
             const authHeader = req.headers.authorization;
@@ -85,6 +86,15 @@ async function run() {
 
         })
 
+        // single product
+
+        app.get('/orders/:id', verifyJWT, async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectID(id)};
+            const result = await orderCollection.findOne(query);
+            res.send(result)
+        })
+
         // all orders shoW
 
 
@@ -127,6 +137,20 @@ async function run() {
             res.send(result)
         })
 
+        // Add my profile 
+        app.post('/myProfile', async(req, res) => {
+            const myProfile = req.body;
+            const result = profileCollection.insertOne(myProfile);
+            res.send(result);
+        })
+
+        app.get('/myProfile/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = {email: email}
+            const result = await profileCollection.findOne(query);
+            res.send(result)
+        })
+
         // order Collection
 
         app.post('/orders', async (req, res) => {
@@ -135,6 +159,7 @@ async function run() {
             res.send(result);
         });
 
+        // insert user
 
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
@@ -153,6 +178,15 @@ async function run() {
             const users = await userCollection.find().toArray()
             res.send(users)
         });
+
+        // user delete
+
+        app.delete('/user/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectID(id) };
+            const result = await userCollection.deleteOne(filter)
+            res.send(result)
+        })
 
         // unauthorized not make a Admin
 
@@ -175,10 +209,42 @@ async function run() {
             res.send({admin : isAdmin})
         })
 
+        // update profile 
 
 
 
+        app.post("/create-payment-intent", verifyJWT, async (req, res) => {
+            const orders = req.body;
+            const price = orders.totalPrice;
+            const amount = price*100;
+          
+            // Create a PaymentIntent with the order amount and currency
+            const paymentIntent = await stripe.paymentIntents.create({
+              amount: amount,
+              currency: "usd",
+              payment_method_types: ['card']
+            });
+          
+            res.send({
+              clientSecret: paymentIntent.client_secret,
+            });
+          });
+        //   patch
 
+        app.patch('/order/:id', verifyJWT, async(req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            const filter = {_id: ObjectID(id)};
+            const updateDoc = {
+                $set: {
+                    paid: true,
+                    transactionId: payment.transactionId,
+                }
+            }
+            const result = await paymentCollection.insertOne(payment);
+            const updatedOrder = await orderCollection.updateOne(filter, updateDoc);
+            res.send(updateDoc)
+        })
         // line end
 
     }
@@ -198,5 +264,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Doctors Projects listening on port ${port}`)
+    console.log(`Tech Parts Projects listening on port ${port}`)
 })
