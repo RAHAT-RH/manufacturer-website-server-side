@@ -55,14 +55,18 @@ async function run() {
                 res.status(403).send({ message: 'Forbidden' });
             }
         }
+
         // add product get
+
         app.get('/allProducts', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
             const result = await cursor.toArray();
             res.send(result)
         })
+
         // add product get by id
+
         app.get('/allProducts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectID(id) };
@@ -87,7 +91,7 @@ async function run() {
 
         })
 
-        // single product
+        // single product order routes
 
         app.get('/orders/:id', verifyJWT, async(req, res) => {
             const id = req.params.id;
