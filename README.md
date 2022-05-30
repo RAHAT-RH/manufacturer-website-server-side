@@ -7,8 +7,15 @@ manufacturer-website-server-side-RAHAT-RH created by GitHub Classroom
 ### About Tech Server Side
 
 This server Side will satar as npm run start-dev. It uses express.js,
-Mongodb, JsonWebToken, dotenv, stripe etc
-It has 5 collection
+Mongodb, JsonWebToken, dotenv, stripe etc.
+It has 6 collection:
+Therre are:
+1. all_products
+2. all_orders
+3. all-review
+4. all-user
+5. payment
+6. profile
 
 
 
