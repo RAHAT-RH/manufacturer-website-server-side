@@ -160,7 +160,7 @@ async function run() {
             res.send(result)
         })
 
-        // order Collection
+        // order Collection 
 
         app.post('/orders', async (req, res) => {
             const order = req.body;
@@ -220,8 +220,6 @@ async function run() {
 
         // update profile 
 
-
-
         app.post("/create-payment-intent", verifyJWT, async (req, res) => {
             const orders = req.body;
             const price = orders.totalPrice;
@@ -238,6 +236,7 @@ async function run() {
               clientSecret: paymentIntent.client_secret,
             });
           });
+          
         //   patch
 
         app.patch('/order/:id', verifyJWT, async(req, res) => {
