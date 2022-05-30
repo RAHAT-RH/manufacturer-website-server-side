@@ -151,6 +151,8 @@ async function run() {
             res.send(result);
         })
 
+        // My profile get by email
+
         app.get('/myProfile/:email', async (req, res) => {
             const email = req.params.email;
             const query = {email: email}
