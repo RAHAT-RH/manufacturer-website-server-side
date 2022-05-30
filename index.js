@@ -108,7 +108,9 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result);
         })
+
         // Single Order Delete
+        
         app.delete('/delete/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectID(id) };
