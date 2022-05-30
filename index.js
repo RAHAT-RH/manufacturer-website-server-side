@@ -62,7 +62,7 @@ async function run() {
             const result = await cursor.toArray();
             res.send(result)
         })
-
+        // add product get by id
         app.get('/allProducts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectID(id) };
