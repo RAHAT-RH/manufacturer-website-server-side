@@ -55,13 +55,14 @@ async function run() {
                 res.status(403).send({ message: 'Forbidden' });
             }
         }
-
+        // add product get
         app.get('/allProducts', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
             const result = await cursor.toArray();
             res.send(result)
         })
+
         app.get('/allProducts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectID(id) };
