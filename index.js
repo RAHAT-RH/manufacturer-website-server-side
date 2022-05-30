@@ -97,22 +97,21 @@ async function run() {
 
         // all orders shoW
 
-
         app.get('/manageOrder', async (req, res) => {
             const query = {};
             const cursor = orderCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
         })
-
         // Single Order Delete
-
         app.delete('/delete/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectID(id) };
             const result = await orderCollection.deleteOne(filter)
             res.send(result)
         })
+
+        // get product
 
         app.post('/product', async (req, res) => {
             const product = req.body;
