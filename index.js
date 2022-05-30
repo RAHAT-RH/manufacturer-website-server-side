@@ -236,7 +236,7 @@ async function run() {
               clientSecret: paymentIntent.client_secret,
             });
           });
-          
+
         //   patch
 
         app.patch('/order/:id', verifyJWT, async(req, res) => {
@@ -253,9 +253,11 @@ async function run() {
             const updatedOrder = await orderCollection.updateOne(filter, updateDoc);
             res.send(updateDoc)
         })
+
         // line end
 
     }
+
     finally {
         // await client.close();
     }
@@ -264,8 +266,6 @@ async function run() {
 run().catch(console.dir)
 
 // mongoDB end
-
-
 
 app.get('/', (req, res) => {
     res.send('Hello Doctors Welcome To server site')
